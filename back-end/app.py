@@ -1,10 +1,10 @@
-from allViews import *
-from flask import Flask
-from flask_cors import CORS
+from initApp import *
+from messagesView import *
 
 
-app = Flask(__name__)
-CORS(app,  supports_credentials=True)
+@app.route('/aaa', methods=['POST', 'GET'])
+def hello():
+    return 'hello'
 
 
 if __name__ == "__main__":

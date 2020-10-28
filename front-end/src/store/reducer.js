@@ -1,5 +1,5 @@
 // const { fromJS } = require('immutable');
-const initState = { token: 'abcdef', userId: '123456' };
+const initState = { token: null, userId: null };
 
 
 const reducer = (state = initState, action) => {

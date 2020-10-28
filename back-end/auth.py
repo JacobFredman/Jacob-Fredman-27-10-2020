@@ -1,5 +1,5 @@
 from flask import Blueprint, request, json
-from app import app
+from initApp import app
 from utils import verify_password, encodeToken, decodeToken
 from datetime import datetime, timedelta
 import jwt
@@ -16,10 +16,10 @@ usersPasswordsDict = {
 @app.route('/sign_in', methods=['POST'])
 def signIn():
     clientValues = request.get_json(force=True)
-
-    if not clientValues or not verify_password(usersPasswordsDict[clientValues['userId']], clientValues['userPassword']):
+    print(clientValues)
+    if not clientValues or not verify_password(usersPasswordsDict[clientValues['userId']], clientValues['password']):
         return 'not authunticated user', 401
-
+    print('ejej')
     token = jwt.encode({
         'userId': clientValues['userId'],
         'exp': (datetime.now() + timedelta(minutes=60)).strftime("%Y-%m-%d %H:%M:%S"),

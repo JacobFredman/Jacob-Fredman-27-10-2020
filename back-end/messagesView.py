@@ -1,5 +1,5 @@
 from flask import Blueprint, request, json
-from app import app
+from initApp import app
 from message import Message
 from auth import get_userId_from_token
 

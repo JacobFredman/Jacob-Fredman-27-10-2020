@@ -37,7 +37,14 @@ def encodeToken(token):
     return encoded
 
 
+b = 4
+c = 5
+
+
 def decodeToken(encodedToken):
+    # a = 3
+    # b = 5
+    # return 'aaa'
     f = Fernet(secret_key)
     token = f.decrypt(encodedToken.replace("b'", "'", 1).encode())
     return token
