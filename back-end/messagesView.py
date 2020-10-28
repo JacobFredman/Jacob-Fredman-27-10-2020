@@ -15,7 +15,8 @@ def get_all_masseges():
 
 @app.route('/write_message', methods=['POST'])
 def write_message():
-    pass
+    messageParameters = request.get_json(force=True)
+    messagesList.insert(messageParameters)
 
 
 @app.route('/delete_message', methods=['DELETE'])
