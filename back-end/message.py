@@ -9,4 +9,4 @@ class Message:
         self.message = message
         self.subject = subject
         self.creation_date = datetime.today().strftime('%d-%m-%Y')
-        self.id = uuid.uuid4()
+        self.id = str(uuid.uuid4())

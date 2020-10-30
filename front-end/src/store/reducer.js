@@ -1,5 +1,5 @@
 // const { fromJS } = require('immutable');
-const initState = { token: null, userId: null };
+const initState = { token: null, userId: 123 };
 
 
 const reducer = (state = initState, action) => {
@@ -7,14 +7,11 @@ const reducer = (state = initState, action) => {
         case 'CONSTLISTS':
             const updatedConstLists = state.updateIn(['constLists', action.name], () => action.val);
             return updatedConstLists;
-        case 'SEARCHINFO':
-            const updatedPPLSearchInfo = state.updateIn(['searchInfo', action.name], () => action.val);
-            return updatedPPLSearchInfo;
-        case 'AUTH':
-            const updatedAuth = state.updateIn(['tokenAndDetails'], () => action.val)
-            return updatedAuth;
         case 'token':
             state = { ...state, token: action.val }
+            break;
+        case 'userId':
+            state = { ...state, userId: action.val }
             break;
         default:
             return state;

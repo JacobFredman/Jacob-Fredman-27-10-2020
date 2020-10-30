@@ -8,7 +8,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
 
 
-const LoginPage = () => {
+const LoginPage = (props) => {
     const [password, setPassword] = useState();
     const [localUserId, setUserId] = useState();
 
@@ -36,8 +36,7 @@ const LoginPage = () => {
                 "userId": localUserId
             },
             { headers: { 'Content-Type': 'application/json' } }
-        ).then(Response =>
-            dispatch({ type: 'token', val: Response.data.encodedToken })
+        ).then(Response => { dispatch({ type: 'token', val: Response.data.encodedToken }); dispatch({ type: 'userId', val: Response.data.userId }); }
         );
     };
 
@@ -45,6 +44,8 @@ const LoginPage = () => {
 
     return (
         <div>
+            <Button onClick={() => alert(props.loginModalOpened)}></Button>
+            <h4>זיהוי משתמש</h4>
             <Form dir='rtl' style={{ direction: 'rtl', textAlign: 'right' }} >
                 <Form.Row>
                     <Form.Group as={Col} controlId="formGridSenderId">

@@ -2,6 +2,7 @@ from flask import Blueprint, request, json
 from initApp import app
 from message import Message
 from auth import get_userId_from_token
+import jsons
 
 messagesList = []
 
@@ -13,7 +14,7 @@ def get_all_masseges():
     if not userId:
         return 'not authunticated user', 401
     userMessages = [
-        msg for msg in messagesList if msg.receiver == userId]
+        jsons.dump(msg) for msg in messagesList if msg.receiver == userId or msg.sender == userId]
     return json.dumps({"messages": userMessages}), 200
 
 
@@ -24,9 +25,12 @@ def write_message():
     if not userId:
         return 'not authunticated user', 401
     messageParameters = request.get_json(force=True)
-    message = Message(userId, messageParameters['reciverId'],
-                      messageParameters['msgBody'], messageParameters['msgSubject'])
-    messagesList.insert(message)
+    message = Message(userId,
+                      messageParameters['reciverId'],
+                      messageParameters['messageBody'],
+                      messageParameters['subject']
+                      )
+    messagesList.append(message)
     return 'message added', 200
 
 

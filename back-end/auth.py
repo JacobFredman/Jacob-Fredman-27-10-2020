@@ -16,14 +16,12 @@ usersPasswordsDict = {
 @app.route('/sign_in', methods=['POST'])
 def signIn():
     clientValues = request.get_json(force=True)
-    print(clientValues)
     if not clientValues or not verify_password(usersPasswordsDict[clientValues['userId']], clientValues['password']):
         return 'not authunticated user', 401
-    print('ejej')
     token = jwt.encode({
-        'userId': clientValues['userId'],
-        'exp': (datetime.now() + timedelta(minutes=60)).strftime("%Y-%m-%d %H:%M:%S"),
-    }, '1')
+        'userId': str(clientValues['userId']),
+        'endTime': (datetime.now() + timedelta(minutes=60)).strftime("%Y-%m-%d %H:%M:%S")
+    }, 'agg',  algorithm='HS256')
 
     encodedToken = encodeToken(token)
     tokenAndDetails = json.dumps({'encodedToken': str(encodedToken),
@@ -36,12 +34,13 @@ def get_userId_from_token(encodedToken):
         token = decodeToken(str(encodedToken))
     except Exception as e:
         return False
+    userId = 1
 
-    tokenParameters = jwt.decode(token, '1')
+    tokenParameters = jwt.decode(token, 'agg',  algorithm='HS256')
     userId = tokenParameters['userId']
-    expTime = tokenParameters['exp']
+    endTime = tokenParameters['endTime']
 
-    if datetime.now() > parser.parse(expTime):
+    if datetime.now() > parser.parse(endTime):
         return False
     if not userId in usersPasswordsDict:
         return False
