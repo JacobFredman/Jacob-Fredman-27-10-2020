@@ -1,12 +1,8 @@
-// const { fromJS } = require('immutable');
-const initState = { token: null, userId: null, loginModalOpened: true };
+const initState = { token: '', userId: '', loginModalOpened: true, msgsList: [] };
 
 
 const reducer = (state = initState, action) => {
     switch (action.type) {
-        case 'CONSTLISTS':
-            const updatedConstLists = state.updateIn(['constLists', action.name], () => action.val);
-            return updatedConstLists;
         case 'token':
             state = { ...state, token: action.val }
             break;
@@ -15,6 +11,9 @@ const reducer = (state = initState, action) => {
             break;
         case 'loginModalOpened':
             state = { ...state, loginModalOpened: action.val }
+            break;
+        case 'msgsList':
+            state = { ...state, msgsList: action.val }
             break;
         default:
             return state;

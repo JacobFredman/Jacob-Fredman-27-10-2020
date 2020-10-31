@@ -17,10 +17,11 @@ usersPasswordsDict = {
 def signIn():
     clientValues = request.get_json(force=True)
     try:
-        # check if user is the users list
+        # check if user in the users list
         usersPasswordsDict[clientValues['userId']]
     except Exception as e:
         return 'not authunticated user', 401
+
     if not clientValues or not verify_password(usersPasswordsDict[clientValues['userId']], clientValues['password']):
         return 'not authunticated user', 401
     token = jwt.encode({
@@ -39,7 +40,6 @@ def get_userId_from_token(encodedToken):
         token = decodeToken(str(encodedToken))
     except Exception as e:
         return False
-    userId = 1
 
     tokenParameters = jwt.decode(token, 'agg',  algorithm='HS256')
     userId = tokenParameters['userId']
