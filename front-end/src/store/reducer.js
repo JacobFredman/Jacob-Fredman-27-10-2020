@@ -1,5 +1,5 @@
 // const { fromJS } = require('immutable');
-const initState = { token: null, userId: 123 };
+const initState = { token: null, userId: null, loginModalOpened: true };
 
 
 const reducer = (state = initState, action) => {
@@ -12,6 +12,9 @@ const reducer = (state = initState, action) => {
             break;
         case 'userId':
             state = { ...state, userId: action.val }
+            break;
+        case 'loginModalOpened':
+            state = { ...state, loginModalOpened: action.val }
             break;
         default:
             return state;

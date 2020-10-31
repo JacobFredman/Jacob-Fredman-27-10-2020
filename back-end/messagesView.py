@@ -14,7 +14,7 @@ def get_all_masseges():
     if not userId:
         return 'not authunticated user', 401
     userMessages = [
-        jsons.dump(msg) for msg in messagesList if msg.receiver == userId or msg.sender == userId]
+        jsons.dump(msg) for msg in messagesList if msg.receiver == userId]
     return json.dumps({"messages": userMessages}), 200
 
 
@@ -34,7 +34,7 @@ def write_message():
     return 'message added', 200
 
 
-@app.route('/delete_message', methods=['DELETE'])
+@app.route('/delete_message', methods=['POST'])
 def delete_message():
     encodedtoken = request.headers.get('Authorization')
     userId = get_userId_from_token(encodedtoken)
@@ -44,7 +44,7 @@ def delete_message():
 
     for msg in messagesList:
         if msg.id == msgId:
-            if userId == msg.sender:
+            if userId == msg.receiver:
                 messagesList.remove(msg)
                 return "deleted seccessfuly", 200
             else:

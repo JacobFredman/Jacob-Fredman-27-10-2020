@@ -9,10 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import 'react-responsive-modal/styles.css';
 import ManageEmails from './ManageEmails';
 import { Container } from 'react-bootstrap';
+import axios from 'axios';
+import { baseUrl } from '../../utils/staticData';
 
 
 const Messages = () => {
-
 
     return (
         <React.Fragment>

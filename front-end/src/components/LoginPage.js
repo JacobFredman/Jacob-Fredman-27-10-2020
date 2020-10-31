@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { baseUrl } from '../utils/staticData';
@@ -11,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 const LoginPage = (props) => {
     const [password, setPassword] = useState();
     const [localUserId, setUserId] = useState();
+    const [showWrongUserMsg, setShowWrongUserMsg] = useState(false);
+    const [loading, setLoadingState] = useState(false);
 
     const token = useSelector(state => state.token);
     const dispatch = useDispatch();
@@ -29,6 +32,7 @@ const LoginPage = (props) => {
 
 
     const handleSubmit = async () => {
+        setLoadingState(true)
         axios.post(
             baseUrl + 'sign_in',
             {
@@ -36,21 +40,45 @@ const LoginPage = (props) => {
                 "userId": localUserId
             },
             { headers: { 'Content-Type': 'application/json' } }
-        ).then(Response => { dispatch({ type: 'token', val: Response.data.encodedToken }); dispatch({ type: 'userId', val: Response.data.userId }); }
-        );
+        ).then(Response => {
+            dispatch({ type: 'token', val: Response.data.encodedToken });
+            dispatch({ type: 'userId', val: Response.data.userId });
+            dispatch({ type: 'loginModalOpened', val: false });
+        }
+        ).catch(error => {
+            setLoadingState(false);
+            setShowWrongUserMsg(true);
+        })
     };
 
 
 
     return (
         <div>
-            <Button onClick={() => alert(props.loginModalOpened)}></Button>
-            <h4>זיהוי משתמש</h4>
             <Form dir='rtl' style={{ direction: 'rtl', textAlign: 'right' }} >
                 <Form.Row>
+                    <Form.Group as={Col} controlId="formGridHeader">
+                        <h4>זיהוי משתמש</h4>
+                    </Form.Group>
+                </Form.Row>
+                {
+                    showWrongUserMsg
+                        ?
+                        (<Form.Row>
+                            <Form.Group as={Col} controlId="formGridAlert">
+                                <Alert variant="danger" onClose={() => setShowWrongUserMsg(false)} dismissible>
+                                    <Alert.Heading>שם משתמש או סיסמה שגוי!</Alert.Heading>
+                                    <p>נא נסה שנית</p>
+                                </Alert>
+                            </Form.Group>
+                        </Form.Row>)
+                        :
+                        null
+                }
+                <Form.Row>
                     <Form.Group as={Col} controlId="formGridSenderId">
-                        <Form.Label>מזהה משתמש:</Form.Label>
-                        <Form.Control required name='userId' type="number" placeholder="הקש מספר מזהה" onChange={handleChange} />
+                        <Form.Label>שם משתמש:</Form.Label>
+                        <Form.Control required name='userId' type="text" placeholder="שם המשתמש שלך" onChange={handleChange} />
                     </Form.Group>
                 </Form.Row>
                 <Form.Row>
@@ -61,7 +89,7 @@ const LoginPage = (props) => {
                 </Form.Row>
                 <Form.Row>
                     <Form.Group as={Col} controlId="formGridPassword">
-                        <Button onClick={handleSubmit}>הכנס</Button>
+                        <Button disabled={loading} onClick={handleSubmit}>{loading ? "טוען..." : "הכנס"}</Button>
                     </Form.Group>
                 </Form.Row>
             </Form>
