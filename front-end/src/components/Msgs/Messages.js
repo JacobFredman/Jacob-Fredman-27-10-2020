@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import CreateEmail from './CreateEmail';
-import { useDispatch, useSelector } from "react-redux";
 import 'react-responsive-modal/styles.css';
 import ManageEmails from './ManageEmails';
 import { Container } from 'react-bootstrap';
-import axios from 'axios';
-import { baseUrl } from '../../utils/staticData';
 
 
 const Messages = () => {

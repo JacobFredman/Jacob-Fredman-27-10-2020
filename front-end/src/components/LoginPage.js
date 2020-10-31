@@ -2,30 +2,27 @@ import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
-import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { baseUrl } from '../utils/staticData';
 import axios from 'axios';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 
-const LoginPage = (props) => {
+const LoginPage = () => {
     const [password, setPassword] = useState();
     const [localUserId, setUserId] = useState();
     const [showWrongUserMsg, setShowWrongUserMsg] = useState(false);
     const [loading, setLoadingState] = useState(false);
 
-    const token = useSelector(state => state.token);
     const dispatch = useDispatch();
-    const userId = useSelector(state => state.userId);
 
 
     const handleChange = (e) => {
         const name = e.target.name;
         const value = e.target.value;
-        if (name == 'password')
+        if (name === 'password')
             setPassword(value);
-        if (name == 'userId')
+        if (name === 'userId')
             setUserId(value);
     };
 
@@ -34,7 +31,7 @@ const LoginPage = (props) => {
         axios.post(baseUrl + 'get_all_messages',
             {},
             { headers: { 'Content-Type': 'application/json', 'Authorization': Newtoken } }
-        ).then(response => { console.log(response.data); dispatch({ type: 'msgsList', val: response.data.messages }); }
+        ).then(response => { dispatch({ type: 'msgsList', val: response.data.messages }); }
         );
     };
 
@@ -82,7 +79,7 @@ const LoginPage = (props) => {
                             </Form.Group>
                         </Form.Row>)
                         :
-                        null
+                        ''
                 }
                 <Form.Row>
                     <Form.Group as={Col} controlId="formGridSenderId">
