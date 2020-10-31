@@ -30,6 +30,14 @@ const LoginPage = (props) => {
     };
 
 
+    const getMessages = async (Newtoken) => {
+        axios.post(baseUrl + 'get_all_messages',
+            {},
+            { headers: { 'Content-Type': 'application/json', 'Authorization': Newtoken } }
+        ).then(response => { console.log(response.data); dispatch({ type: 'msgsList', val: response.data.messages }); }
+        );
+    };
+
 
     const handleSubmit = async () => {
         setLoadingState(true)
@@ -44,6 +52,7 @@ const LoginPage = (props) => {
             dispatch({ type: 'token', val: Response.data.encodedToken });
             dispatch({ type: 'userId', val: Response.data.userId });
             dispatch({ type: 'loginModalOpened', val: false });
+            getMessages(Response.data.encodedToken);
         }
         ).catch(error => {
             setLoadingState(false);

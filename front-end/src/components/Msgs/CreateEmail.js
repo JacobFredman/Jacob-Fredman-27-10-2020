@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from 'axios';
 import { baseUrl } from '../../utils/staticData';
 import Card from 'react-bootstrap/Card';
-
+import Alert from 'react-bootstrap/Alert';
 
 
 
@@ -17,8 +17,14 @@ const CreateEmail = () => {
     const [reciverId, setReciverId] = useState();
     const [subject, setSubject] = useState();
     const [messageBody, setMessageBody] = useState();
+    const [formValidated, setFormValidated] = useState();
+    const [sendingMsg, setSendingMsg] = useState();
+    const [showWrongUserMsg, setShowWrongUserMsg] = useState(false);
+    const [showOkMsgSending, setShowOkMsgSending] = useState(false);
+
 
     const handleSubmit = async () => {
+        setSendingMsg(true);
         axios.post(
             baseUrl + 'write_message',
             {
@@ -27,13 +33,31 @@ const CreateEmail = () => {
                 messageBody
             },
             { headers: { 'Content-Type': 'application/json', 'Authorization': token } }
-        ).then(Response => { alert(Response.data) }
-        );
+        ).then(Response => { alert(Response.data); setSendingMsg(false); clearForm(); setShowOkMsgSending(true); }
+        ).catch(error => {
+            setSendingMsg(false);
+            setShowWrongUserMsg(true);
+        })
     };
+
+
+    useEffect(() => {
+        setFormValidated(checkVaidation());
+    }, [reciverId, subject, messageBody])
+
+    const clearForm = () => {
+        setReciverId(''); setSubject(''); setMessageBody('');
+    };
+
+
+    const checkVaidation = () => {
+        return reciverId && subject && messageBody;
+    }
 
 
     return (
         <div class="col d-flex justify-content-center">
+            {console.log(subject)}
             <Card style={{ width: '18rem' }}>
                 <Card.Body>
                     <Form dir='rtl' style={{ direction: 'rtl', textAlign: 'right' }} >
@@ -46,25 +70,62 @@ const CreateEmail = () => {
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridReciverId">
                                 <Form.Label>מזהה נמען:</Form.Label>
-                                <Form.Control required name='reciverId' type="text" placeholder="הקש את שם הנמען" onChange={e => setReciverId(e.target.value)} />
+                                <Form.Control required name='reciverId' value={reciverId} type="text" placeholder="הקש את שם הנמען" onChange={e => setReciverId(e.target.value)} />
                             </Form.Group>
                         </Form.Row>
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridSubject">
                                 <Form.Label>נושא:</Form.Label>
-                                <Form.Control required name='subject' type="text" placeholder="נושא" onChange={e => setSubject(e.target.value)} />
+                                <Form.Control required name='subject' value={subject} type="text" placeholder="נושא" onChange={e => setSubject(e.target.value)} />
                             </Form.Group>
                         </Form.Row>
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridSenderId">
                                 <Form.Label>תוכן ההודעה:
                                 </Form.Label>
-                                <Form.Control required name='messageBody' type="text" placeholder="תוכן ההודעה כאן" as="textarea" rows={3} onChange={e => setMessageBody(e.target.value)} />
+                                <Form.Control required name='messageBody' value={messageBody} type="text" placeholder="תוכן ההודעה כאן" as="textarea" rows={3} onChange={e => setMessageBody(e.target.value)} />
                             </Form.Group>
                         </Form.Row>
+                        {
+                            showWrongUserMsg
+                                ?
+                                (<Form.Row>
+                                    <Form.Group as={Col} controlId="formGridWrongMsg">
+                                        <Alert variant="danger" onClose={() => setShowWrongUserMsg(false)} dismissible>
+                                            <Alert.Heading>שם משתמש או סיסמה שגוי!</Alert.Heading>
+                                            <p>נא נסה שנית</p>
+                                        </Alert>
+                                    </Form.Group>
+                                </Form.Row>)
+                                :
+                                null
+                        }
+                        {
+                            showOkMsgSending
+                                ?
+                                (<Form.Row>
+                                    <Form.Group as={Col} controlId="formGridSuccessMsg">
+                                        <Alert variant="success" onClose={() => setShowOkMsgSending(false)} dismissible>
+                                            {/* <Alert.Heading>נשלח בהצלחה!</Alert.Heading> */}
+                                            <p>נשלח בהצלחה!</p>
+
+                                        </Alert>
+                                    </Form.Group>
+                                </Form.Row>)
+                                :
+                                null
+                        }
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridSenderId">
-                                <Button onClick={handleSubmit}>שלח הודעה</Button>
+                                <Button disabled={!formValidated || sendingMsg} onClick={handleSubmit}>
+                                    {
+                                        sendingMsg
+                                            ?
+                                            "שולח..."
+                                            :
+                                            "שלח הודעה"
+                                    }
+                                </Button>
                             </Form.Group>
                         </Form.Row>
                     </Form>

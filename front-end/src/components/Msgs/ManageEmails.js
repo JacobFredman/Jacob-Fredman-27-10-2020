@@ -13,37 +13,43 @@ import Form from 'react-bootstrap/Form';
 
 const ManageEmails = () => {
     const token = useSelector(state => state.token);
-    const [msgsList, setMsgsList] = useState();
-
-    const getMessages = async () => {
-        axios.post(baseUrl + 'get_all_messages',
-            {},
-            { headers: { 'Content-Type': 'application/json', 'Authorization': token } }
-        ).then(response => { console.log(response.data); setMsgsList(response.data.messages); }
-        );
-    };
+    const msgsList = useSelector(state => state.msgsList);
+    const dispatch = useDispatch();
+    const [deleting, setDeleting] = useState();
 
 
     useEffect(() => {
-        getMessages();
+        // getMessages();
         // renderedMsgs();
         alert('getMessages');
-    }, []);
+    });
 
 
     useEffect(() => {
-        getMessages();
+        // getMessages();
         // renderedMsgs();
         alert('aaa');
     }, [ListGroupItem]);
 
 
+    const getMessages = async () => {
+        axios.post(baseUrl + 'get_all_messages',
+            {},
+            { headers: { 'Content-Type': 'application/json', 'Authorization': token } }
+        ).then(response => { console.log(response.data); dispatch({ type: 'msgsList', val: response.data.messages }); }
+        );
+    };
+
     const deleteMsg = async (msgId) => {
+        setDeleting(true);
         axios.post(baseUrl + 'delete_message',
             { msgId },
             { headers: { 'Content-Type': 'application/json', 'Authorization': token } }
-        ).then(response => { console.log(response.data); getMessages(); }
-        );
+            // ).then(response => { console.log(response.data); getMessages(); }
+        ).then(response => { console.log(response.data); setDeleting(false); getMessages(); }
+        ).catch(error => {
+            setDeleting(false);
+        });
     }
 
     const renderedMsgs = () => {
@@ -51,7 +57,7 @@ const ManageEmails = () => {
         if (msgsList === undefined)
             return;
         const renderedCards = msgsList.map((msg, i) =>
-            <Col>
+            <Col style={{ direction: 'rtl' }}>
                 <Card style={{ width: '18rem', textAlign: "right", direction: "rtl" }}>
                     <Card.Body>
                         <Card.Title>{msg.subject}</Card.Title>
@@ -64,7 +70,9 @@ const ManageEmails = () => {
                         </ListGroupItem>
                     </ListGroup>
                     <Card.Body>
-                        <Button id={msg.id} onClick={() => deleteMsg(msg.id)} variant="warning">מחק הודעה</Button>
+                        <Button disabled={deleting} id={msg.id} onClick={() => deleteMsg(msg.id)} variant="warning">
+                            {deleting ? "מוחק..." : "מחק הודעה"}
+                        </Button>
                     </Card.Body>
                 </Card>
             </Col>
@@ -75,7 +83,18 @@ const ManageEmails = () => {
 
     return (
         < React.Fragment >
-            <Button onClick={getMessages}></Button>
+            {/* <Button onClick={getMessages}></Button> */}
+            <Row>
+                <Col style={{ direction: 'rtl', textAlign: 'center' }}>
+                    {
+                        !Array.isArray(msgsList) || !msgsList.length
+                            ?
+                            <h3>אין הודעות להצגה</h3>
+                            :
+                            null
+                    }
+                </Col>
+            </Row>
             <Row>
                 {renderedMsgs()}
             </Row>
