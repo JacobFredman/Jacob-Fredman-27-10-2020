@@ -1,4 +1,5 @@
 from datetime import datetime
+import uuid
 
 
 class Message:
@@ -7,4 +8,5 @@ class Message:
         self.receiver = receiver
         self.message = message
         self.subject = subject
-        self.creation_date = datetime.today().strftime('%d-%m-%Y')
+        self.creation_date = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
+        self.id = str(uuid.uuid4())
