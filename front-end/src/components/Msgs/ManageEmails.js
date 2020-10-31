@@ -27,8 +27,15 @@ const ManageEmails = () => {
     useEffect(() => {
         getMessages();
         // renderedMsgs();
-        alert('aaa');
+        alert('getMessages');
     }, []);
+
+
+    useEffect(() => {
+        getMessages();
+        // renderedMsgs();
+        alert('aaa');
+    }, [ListGroupItem]);
 
 
     const deleteMsg = async (msgId) => {
