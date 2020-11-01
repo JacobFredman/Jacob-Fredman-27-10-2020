@@ -1,5 +1,5 @@
 from initApp import *
-from messagesView import *
+# from messagesView import *
 
 
 @app.route('/api')
